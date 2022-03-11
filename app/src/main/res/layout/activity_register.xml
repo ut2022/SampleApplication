@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.register.RegisterActivity">
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="match_parent"
+        android:layout_height="190dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/undrawsignin" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/iv_logo">
+
+        <RelativeLayout
+            android:id="@+id/main_rl0"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:id="@+id/et_reg_name"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/border"
+                android:hint="Name"
+                android:paddingLeft="15dp"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/et_reg_phno"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/et_reg_name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/border"
+                android:hint="Phone Number"
+                android:inputType="number"
+                android:paddingLeft="15dp"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/et_reg_email"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/et_reg_phno"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/border"
+                android:hint="Email"
+                android:paddingLeft="15dp"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/et_reg_password"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/et_reg_email"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/border"
+                android:hint="Password"
+                android:paddingLeft="15dp"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/bt_proceed"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_below="@id/et_reg_password"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="Proceed"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>
