@@ -22,8 +22,10 @@ import com.example.sampleapplication.login.model.LoginResults;
 import com.example.sampleapplication.login.roomdatabase.UserDao;
 import com.example.sampleapplication.login.roomdatabase.UserDatabase;
 import com.example.sampleapplication.login.roomdatabase.UserEntity;
+import com.example.sampleapplication.login.roomdatabase.UserRepository;
 import com.example.sampleapplication.login.viewmodel.LoginViewModel;
 import com.example.sampleapplication.ui.register.RegisterActivity;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +47,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class); //initialize viewmodel
         ActivityLoginBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+        userDao = new UserRepository(getApplication()).userDao;
         registerObservers();
         registerButtonObserver();
         binding.setViewModel(loginViewModel);
         loginViewModel.getData();
-        userDao = UserDatabase.getInstance(getApplicationContext()).userDao();
         dbObserver();
+        observerUserExistStatus();
 //        loginViewModel.checkuser(getApplication());
 
 
@@ -75,11 +78,15 @@ public class LoginActivity extends AppCompatActivity {
                         break;
 
                     case SUCCESS:
-                        Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_SHORT).show();
 //                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 ////                intent.putExtra("user", user);
 //                        startActivity(intent);
 //                        loginViewModel.getAllData();
+                        /**
+                         * After Successful Validation Check if User Exist
+                         */
+                        checkIfUserExists();
                         break;
 
                     case PASSWORD:
@@ -103,6 +110,50 @@ public class LoginActivity extends AppCompatActivity {
 
     public enum Validationtype {
         PHONE,SUCCESS, PASSWORD
+    }
+
+    /**
+     * To Check If user Exist in Room Database
+     */
+    private void checkIfUserExists() {
+        String userMob = loginViewModel.getUserphonenumber();
+        LiveData<List<UserEntity>> userEntitiesLiveData = loginViewModel.getDbData(userDao);
+        userEntitiesLiveData.observe(LoginActivity.this, userEntities -> {
+            if (!userEntities.isEmpty()) {
+                for (UserEntity userEntity : userEntities) {
+                    if (userMob.equals(userEntity.getUserphno())) {
+                        loginViewModel.isUserExist.setValue(true);
+                        return;
+                    }
+                }
+            }
+            loginViewModel.isUserExist.setValue(false);
+        });
+    }
+
+    /**
+     * Observing for Logging In User
+     */
+    private void observerUserExistStatus() {
+        loginViewModel.isUserExist.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean exist) {
+                if (exist){
+                    /**
+                     * Create SharedPres a seperate class
+                     */
+                    SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("isLoggedIn", true);
+                    editor.apply();
+
+                    Toast.makeText(LoginActivity.this, "Login Successful: Navigate to Home", Toast.LENGTH_SHORT).show();
+                    //Navigate To HomeActivity
+                }else{
+                    Toast.makeText(LoginActivity.this, "No user exists with this phone number", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void registerObservers() {

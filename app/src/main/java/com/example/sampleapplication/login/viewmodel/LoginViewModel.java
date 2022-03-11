@@ -2,15 +2,16 @@ package com.example.sampleapplication.login.viewmodel;
 
 import static android.content.ContentValues.TAG;
 
-import android.app.Application;
 import android.util.Log;
 
 import androidx.databinding.Bindable;
 import androidx.databinding.Observable;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.sampleapplication.login.model.LoginResults;
+import com.example.sampleapplication.login.roomdatabase.UserDao;
 import com.example.sampleapplication.login.roomdatabase.UserEntity;
 import com.example.sampleapplication.login.roomdatabase.UserRepository;
 import com.example.sampleapplication.retrofit.RetrofitClient;
@@ -28,6 +29,7 @@ public class LoginViewModel extends ViewModel implements Observable {
     private UserRepository userRepository;
 
     public MutableLiveData<Boolean> registerEvent= new MutableLiveData<>();
+    public MutableLiveData<Boolean> isUserExist = new MutableLiveData<>();
 
     private MutableLiveData<LoginActivity.Validationtype> validationLivedata = new MutableLiveData<>();
 
@@ -88,6 +90,10 @@ public class LoginViewModel extends ViewModel implements Observable {
                 loginResponsedata.setValue(null);
             }
         });
+    }
+
+    public LiveData<List<UserEntity>> getDbData(UserDao userDao) {
+        return userDao.getValues();
     }
 
     public boolean validatePassword(final String password) {
