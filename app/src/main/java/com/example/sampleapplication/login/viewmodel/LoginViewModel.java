@@ -5,9 +5,11 @@ import static android.content.ContentValues.TAG;
 import android.app.Application;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
 import androidx.databinding.Observable;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.sampleapplication.login.model.LoginResults;
@@ -70,19 +72,29 @@ public class LoginViewModel extends ViewModel implements Observable {
         validationLivedata.setValue(LoginActivity.Validationtype.SUCCESS);
     }
 
-    public void getData() {
+    public void getData(LoginActivity loginActivity) {
         RetrofitClient.getRetrofitInstance().getMyApi().getData();
         Call<List<LoginResults>> call = RetrofitClient.getRetrofitInstance().getMyApi().getData();
         call.enqueue(new Callback<List<LoginResults>>() {
             @Override
-            public void onResponse(Call<List<LoginResults>> call, Response<List<LoginResults>> response) {
+            public void onResponse(@NonNull Call<List<LoginResults>> call, @NonNull Response<List<LoginResults>> response) {
                 if(response.isSuccessful()) {
                     List<LoginResults> loginResults = response.body();
-                    Log.e(TAG, "onResponse: " + response.code());
+                    Log.e("login", "onResponse: " + response.code());
                     loginResponsedata.setValue(loginResults);
+                    loginResponsedata.observe(loginActivity, new Observer<List<LoginResults>>() {
+                        @Override
+                        public void onChanged(List<LoginResults> loginResults) {
+                            for (int i=1; i ==loginResults.size();i++){
+                                Log.d("login",loginResults.get(i).getPhonenumber() );
+                                Log.d("login",loginResults.get(i).getPassword());
+                            }
+
+                        }
+                    });
+
                 }
             }
-
             @Override
             public void onFailure(Call<List<LoginResults>> call, Throwable t) {
                 loginResponsedata.setValue(null);
